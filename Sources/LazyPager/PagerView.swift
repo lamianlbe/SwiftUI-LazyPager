@@ -494,4 +494,13 @@ class PagerView<Element, Loader: ViewLoader, Content: View>: UIScrollView, UIScr
         scrollingFinished()
         isUserScrolling = false
     }
+    
+    func scrollViewShouldScrollToTop(_ scrollView: UIScrollView) -> Bool {
+        isUserScrolling = true
+        return true
+    }
+    
+    func scrollViewDidScrollToTop(_ scrollView: UIScrollView) {
+        isUserScrolling = false
+    }
 }
