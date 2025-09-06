@@ -416,16 +416,20 @@ class PagerView<Element, Loader: ViewLoader, Content: View>: UIScrollView, UIScr
     
     var lastPos: CGFloat = 0
     var hasNotfiedOverscroll = false
+    var isUserScrolling = false
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        isUserScrolling = true
         config.dragCallback?()
     }
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
         if !scrollView.isTracking, !isRotating, (currentView.index != page.wrappedValue || page.wrappedValue != currentIndex ) {
-            currentIndex = currentView.index
-            page.wrappedValue = currentIndex
+            if isUserScrolling {
+                currentIndex = currentView.index
+                page.wrappedValue = currentIndex
+            }
         }
         
         if let index = loadedViews[safe: relativeIndex]?.index {
@@ -482,10 +486,12 @@ class PagerView<Element, Loader: ViewLoader, Content: View>: UIScrollView, UIScr
     public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if !decelerate {
             scrollingFinished()
+            isUserScrolling = false
         }
     }
     
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         scrollingFinished()
+        isUserScrolling = false
     }
 }

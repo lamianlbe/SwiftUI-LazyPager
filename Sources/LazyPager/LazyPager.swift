@@ -99,6 +99,9 @@ public struct Config<Element> {
     
     /// % ammount (from 0-1) of overscroll needed to call overscrollCallback
     public var overscrollThreshold: Double = 0.15
+    
+    /// 嵌套的情况下内层LazyPager的context.transition.animation可能一直为 nil，设置此选项以强行开启动画
+    public var forceAnimation: Bool = false
 }
 
 public struct LazyPager<Element, DataCollecton: RandomAccessCollection, Content: View> where DataCollecton.Index == Int, DataCollecton.Element == Element {
@@ -230,7 +233,7 @@ extension LazyPager: UIViewControllerRepresentable {
         defer { uiViewController.reloadViews() }
         if page.wrappedValue != uiViewController.pagerView.currentIndex {
             // Index was explicitly updated
-            uiViewController.goToPage(page.wrappedValue, animated: context.transaction.animation != nil)
+            uiViewController.goToPage(page.wrappedValue, animated: context.transaction.animation != nil || config.forceAnimation)
         }
         
         if page.wrappedValue >= data.count {
